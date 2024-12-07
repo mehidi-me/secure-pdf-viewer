@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
 
-
+const upload = multer({ dest: "uploads/" });
 
 function runMiddleware(req, fn) {
   return new Promise((resolve, reject) => {
