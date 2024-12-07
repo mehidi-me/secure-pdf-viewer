@@ -141,7 +141,7 @@ function PdfUploader() {
   };
 
   return (
-    <section id="app" className="bg-white">
+    <section id="app" className="bg-white h-[100vh]">
         <button className="ml-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={() => {
         // Clear localStorage and redirect to home
         localStorage.removeItem("username");
@@ -218,7 +218,7 @@ function PdfUploader() {
                     key={index}
                     className="flex items-center justify-between border border-gray-200 p-4 rounded-lg shadow-sm"
                   >
-                    <p className="text-gray-800 break-all w-[200px]">{fileObj.name}</p>
+                    <p className="text-gray-800 break-all w-[140px] md:w-[500px]">{fileObj.name}</p>
                    <div className="w-[160px]">
                    <button
                       onClick={() =>
