@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UploaderIcon from "./UploaderIcon";
 
 function PdfUploader() {
@@ -12,6 +12,54 @@ function PdfUploader() {
 
   const [uploadStatus, setUploadStatus] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Fetch the list of uploaded files when the component mounts
+    const fetchUploadedFiles = async () => {
+      try {
+        const response = await fetch("/api/upload"); // Endpoint to get uploaded files
+        const data = await response.json();
+        if (data.message) {
+          console.log(data);
+        } else {
+          console.log(data);
+          setUploadedFiles(data);
+        }
+      } catch (error) {
+        console.error("Error fetching uploaded files:", error);
+      }
+    };
+
+    fetchUploadedFiles();
+  }, []);
+
+  const handleDelete = async (fileObj) => {
+    try {
+      // Make a DELETE request to the API
+      const response = await fetch("/api/upload", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: fileObj.url }), // Send the URL of the file to delete
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Remove from UI by filtering out the deleted file
+        setUploadedFiles((prevFiles) =>
+          prevFiles.filter((file) => file.url !== fileObj.url)
+        );
+        alert("File deleted successfully");
+      } else {
+        alert(data.error || "Failed to delete the file");
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+      alert("Failed to delete the file");
+    }
+  };
 
   const handleUpload = async (file) => {
     setUploadStatus("");
@@ -38,7 +86,7 @@ function PdfUploader() {
         // Update the uploaded files list with the new file info
         setUploadedFiles((prevFiles) => [
           ...prevFiles,
-          { file, url: data.url },
+          { name: file.name, url: data.url },
         ]);
       }
     } catch (error) {
@@ -94,6 +142,12 @@ function PdfUploader() {
 
   return (
     <section id="app" className="bg-white">
+        <button className="ml-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={() => {
+        // Clear localStorage and redirect to home
+        localStorage.removeItem("username");
+        localStorage.removeItem("password");
+        window.location.reload();
+      }}>Logout</button>
       <div className="pt-10 md:py-16 lg:py-24 overflow-hidden">
         <div className="max-w-screen-xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto lg:max-w-none">
@@ -156,20 +210,37 @@ function PdfUploader() {
           <div className="mt-8 max-w-screen-md mx-auto px-4">
             <h2 className="text-lg font-bold mb-4">Uploaded Files</h2>
             <ul className="space-y-4">
-              {uploadedFiles.map((fileObj, index) => (
-                <li
-                  key={index}
-                  className="flex items-center justify-between border border-gray-200 p-4 rounded-lg shadow-sm"
-                >
-                  <p className="text-gray-800 break-all">{fileObj.file.name}</p>
-                  <button
-                    onClick={() => router.push(window.location.origin+fileObj.url)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              {uploadedFiles
+                .slice() // Create a copy to avoid mutating the original array
+                .reverse()
+                .map((fileObj, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center justify-between border border-gray-200 p-4 rounded-lg shadow-sm"
                   >
-                    View
-                  </button>
-                </li>
-              ))}
+                    <p className="text-gray-800 break-all w-[200px]">{fileObj.name}</p>
+                   <div className="w-[160px]">
+                   <button
+                      onClick={() =>
+                        router.push(window.location.origin + fileObj.url)
+                      }
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => {
+                        if(confirm("Are you sure you want to")){
+                            handleDelete(fileObj)
+                        }
+                      }} // Call the delete handler
+                      className="ml-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                   </div>
+                  </li>
+                ))}
             </ul>
           </div>
         )}
