@@ -163,7 +163,7 @@ function PdfUploader() {
                 >
                   <p className="text-gray-800 break-all">{fileObj.file.name}</p>
                   <button
-                    onClick={() => router.push(fileObj.url)}
+                    onClick={() => router.push(window.location.origin+fileObj.url)}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                   >
                     View

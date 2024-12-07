@@ -54,9 +54,7 @@ export async function POST(req) {
      const arrayBuffer = await file.arrayBuffer();
      const buffer = Buffer.from(arrayBuffer);
      await fs.writeFile(destination, buffer);
-
-     const host = req.headers.host;  // e.g., 'localhost:3000'
-     const url = `http://${host}/viewer/${uniqueId}`;
+     const url = `/viewer/${uniqueId}`;
 
     return NextResponse.json({ url }, { status: 200 });
   } catch (error) {
