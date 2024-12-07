@@ -141,7 +141,7 @@ function PdfUploader() {
   };
 
   return (
-    <section id="app" className="bg-white h-[100vh]">
+    <section id="app" className="bg-white min-h-[100vh]">
         <button className="ml-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={() => {
         // Clear localStorage and redirect to home
         localStorage.removeItem("username");
