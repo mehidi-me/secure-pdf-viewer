@@ -55,8 +55,8 @@ export async function POST(req) {
      const buffer = Buffer.from(arrayBuffer);
      await fs.writeFile(destination, buffer);
 
-    // 5️⃣ Generate the URL where the PDF can be viewed
-    const url = `${req.nextUrl.origin}/viewer/${uniqueId}`;
+     const host = req.headers.host;  // e.g., 'localhost:3000'
+     const url = `http://${host}/viewer/${uniqueId}`;
 
     return NextResponse.json({ url }, { status: 200 });
   } catch (error) {
